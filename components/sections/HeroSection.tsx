@@ -13,7 +13,7 @@ interface MarsData {
 
 export default function HeroSection() {
   const [marsData, setMarsData] = useState<MarsData | null>(null);
-  const [currentTime, setCurrentTime] = useState(new Date());
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
     fetch("/api/mars-distance")
@@ -23,6 +23,7 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
+    setCurrentTime(new Date());
     const id = setInterval(() => setCurrentTime(new Date()), 1000);
     return () => clearInterval(id);
   }, []);
@@ -121,7 +122,7 @@ export default function HeroSection() {
           <div className="flex flex-col items-center col-span-2 sm:col-span-3 border-t border-mars-500/10 pt-3 mt-1">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">地球時間 (UTC)</span>
             <span className="text-[var(--text-secondary)] text-sm terminal-cursor">
-              {currentTime.toUTCString().replace("GMT", "UTC")}
+              {currentTime?.toUTCString().replace("GMT", "UTC") ?? "---"}
             </span>
           </div>
         </motion.div>

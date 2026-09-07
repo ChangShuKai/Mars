@@ -2,35 +2,42 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
-import { Camera, ChevronLeft, ChevronRight, ExternalLink, X } from "lucide-react";
-import type { RoverPhoto } from "@/types/nasa";
+import { Camera, ChevronLeft, ChevronRight, ExternalLink, X, Search } from "lucide-react";
+
+interface NasaImageItem {
+  href: string;
+  data: Array<{
+    title: string;
+    nasa_id: string;
+    date_created: string;
+    description: string;
+    center?: string;
+    keywords?: string[];
+  }>;
+  links?: Array<{ href: string; rel: string; render?: string }>;
+}
 
 const ROVERS = [
-  { id: "perseverance", label: "毅力號", labelEn: "Perseverance", year: 2021 },
-  { id: "curiosity", label: "好奇號", labelEn: "Curiosity", year: 2012 },
+  { id: "perseverance", label: "毅力號", labelEn: "Perseverance", emoji: "🤖" },
+  { id: "curiosity",    label: "好奇號", labelEn: "Curiosity",    emoji: "🔭" },
 ] as const;
 
-const PERSEVERANCE_CAMERAS = [
+const KEYWORDS = [
   { id: "", label: "全部" },
-  { id: "NAVCAM_LEFT", label: "導航左" },
-  { id: "NAVCAM_RIGHT", label: "導航右" },
-  { id: "MCZ_LEFT", label: "主相機左" },
-  { id: "MCZ_RIGHT", label: "主相機右" },
-  { id: "FRONT_HAZCAM_LEFT_A", label: "前避障左" },
-  { id: "SHERLOC_WATSON", label: "Watson" },
+  { id: "surface", label: "表面" },
+  { id: "sample", label: "樣本" },
+  { id: "panorama", label: "全景" },
+  { id: "rock", label: "岩石" },
+  { id: "selfie", label: "自拍" },
 ];
 
-const CURIOSITY_CAMERAS = [
-  { id: "", label: "全部" },
-  { id: "NAVCAM", label: "導航" },
-  { id: "MAST", label: "主桅桿" },
-  { id: "FHAZ", label: "前避障" },
-  { id: "RHAZ", label: "後避障" },
-  { id: "MAHLI", label: "手持鏡頭" },
-];
+function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: () => void }) {
+  const thumb = item.links?.find((l) => l.rel === "preview")?.href;
+  const data = item.data[0];
+  const date = data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : "";
 
-function PhotoCard({ photo, onClick }: { photo: RoverPhoto; onClick: () => void }) {
+  if (!thumb) return null;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,33 +45,34 @@ function PhotoCard({ photo, onClick }: { photo: RoverPhoto; onClick: () => void 
       className="glass-card rounded-xl overflow-hidden border border-white/5 hover:border-mars-500/30 transition-all duration-300 cursor-pointer group"
       onClick={onClick}
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden bg-space-800">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src={photo.img_src}
-          alt={`Sol ${photo.sol} - ${photo.camera.full_name}`}
+          src={thumb}
+          alt={data.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
+          onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-space-950/80 via-transparent to-transparent" />
-        <div className="absolute bottom-2 left-2 font-mono text-[9px] text-mars-300">
-          Sol {photo.sol}
+        <div className="absolute top-2 right-2">
+          <Camera size={10} className="text-mars-300/70" />
         </div>
       </div>
       <div className="p-3">
-        <div className="flex items-center gap-1.5 mb-1">
-          <Camera size={10} className="text-mars-500" />
-          <span className="font-mono text-[10px] text-[var(--text-muted)]">
-            {photo.camera.full_name}
-          </span>
-        </div>
-        <p className="font-mono text-[10px] text-[var(--text-secondary)]">{photo.earth_date}</p>
+        <p className="font-display text-xs text-[var(--text-secondary)] line-clamp-2 mb-1 leading-tight">
+          {data.title}
+        </p>
+        <p className="font-mono text-[9px] text-[var(--text-muted)]">{date}</p>
       </div>
     </motion.div>
   );
 }
 
-function LightBox({ photo, onClose }: { photo: RoverPhoto; onClose: () => void }) {
+function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void }) {
+  const data = item.data[0];
+  const thumb = item.links?.find((l) => l.rel === "preview")?.href;
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -80,31 +88,35 @@ function LightBox({ photo, onClose }: { photo: RoverPhoto; onClose: () => void }
         className="relative max-w-4xl w-full"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          className="absolute -top-10 right-0 text-white/60 hover:text-white"
-        >
+        <button onClick={onClose} className="absolute -top-10 right-0 text-white/60 hover:text-white">
           <X size={24} />
         </button>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={photo.img_src}
-          alt={`Sol ${photo.sol}`}
-          className="w-full rounded-lg max-h-[80vh] object-contain"
-        />
-        <div className="mt-3 flex items-center justify-between">
-          <div className="font-mono text-xs text-[var(--text-secondary)]">
-            <span className="text-mars-400">{photo.rover.name}</span> ·{" "}
-            {photo.camera.full_name} · Sol {photo.sol} · {photo.earth_date}
+        {thumb && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={thumb.replace("~thumb", "~medium")}
+            alt={data.title}
+            className="w-full rounded-lg max-h-[65vh] object-contain bg-space-900"
+          />
+        )}
+        <div className="mt-4 glass-card rounded-xl p-4">
+          <h3 className="text-white font-display font-semibold mb-1">{data.title}</h3>
+          <p className="font-mono text-[10px] text-[var(--text-muted)] mb-2">
+            {data.center} · {data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : ""}
+          </p>
+          <p className="text-[var(--text-secondary)] text-sm font-display leading-relaxed line-clamp-3">
+            {data.description}
+          </p>
+          <div className="mt-3 flex items-center gap-4">
+            <a
+              href={`https://images.nasa.gov/details/${data.nasa_id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 font-mono text-xs text-mars-400 hover:text-mars-300"
+            >
+              NASA 頁面 <ExternalLink size={10} />
+            </a>
           </div>
-          <a
-            href={photo.img_src}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 font-mono text-xs text-mars-400 hover:text-mars-300"
-          >
-            原始 <ExternalLink size={10} />
-          </a>
         </div>
       </motion.div>
     </motion.div>
@@ -113,14 +125,12 @@ function LightBox({ photo, onClose }: { photo: RoverPhoto; onClose: () => void }
 
 export default function RoverFeed() {
   const [rover, setRover] = useState<"perseverance" | "curiosity">("perseverance");
-  const [camera, setCamera] = useState("");
-  const [photos, setPhotos] = useState<RoverPhoto[]>([]);
+  const [keyword, setKeyword] = useState("");
+  const [photos, setPhotos] = useState<NasaImageItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [selected, setSelected] = useState<RoverPhoto | null>(null);
+  const [selected, setSelected] = useState<NasaImageItem | null>(null);
   const [page, setPage] = useState(1);
-
-  const cameras = rover === "perseverance" ? PERSEVERANCE_CAMERAS : CURIOSITY_CAMERAS;
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -128,29 +138,27 @@ export default function RoverFeed() {
     try {
       const params = new URLSearchParams({
         rover,
-        latest: page === 1 ? "true" : "false",
-        ...(camera ? { camera } : {}),
+        ...(keyword ? { keyword } : {}),
         page: String(page),
       });
       const res = await fetch(`/api/rover-photos?${params}`);
       const data = await res.json();
-      const list: RoverPhoto[] = data.latest_photos ?? data.photos ?? [];
-      setPhotos(list.slice(0, 24));
+      const items: NasaImageItem[] = data?.collection?.items ?? [];
+      // Filter to only items with preview images
+      setPhotos(items.filter((item) => item.links?.some((l) => l.rel === "preview")));
     } catch {
       setError(true);
     } finally {
       setLoading(false);
     }
-  }, [rover, camera, page]);
+  }, [rover, keyword, page]);
 
   useEffect(() => { load(); }, [load]);
 
   return (
     <section id="rovers" className="relative py-24 bg-space-900/50">
       <AnimatePresence>
-        {selected && (
-          <LightBox photo={selected} onClose={() => setSelected(null)} />
-        )}
+        {selected && <LightBox item={selected} onClose={() => setSelected(null)} />}
       </AnimatePresence>
 
       <div className="section-padding">
@@ -162,13 +170,13 @@ export default function RoverFeed() {
           className="mb-10"
         >
           <p className="font-mono text-xs text-mars-400 tracking-[0.3em] uppercase mb-3">
-            NASA Mars Rover Photos API
+            NASA Image & Video Library
           </p>
           <h2 className="text-4xl sm:text-5xl font-display font-bold text-gradient mb-4">
             探測車圖片牆
           </h2>
           <p className="text-[var(--text-secondary)] font-display text-lg max-w-2xl">
-            直接來自 NASA 的最新火星表面照片。點擊圖片放大查看。
+            NASA 官方媒體庫精選 — 真實火星表面影像。點擊圖片放大查看。
           </p>
         </motion.div>
 
@@ -179,32 +187,31 @@ export default function RoverFeed() {
             {ROVERS.map((r) => (
               <button
                 key={r.id}
-                onClick={() => { setRover(r.id); setCamera(""); setPage(1); }}
+                onClick={() => { setRover(r.id); setPage(1); }}
                 className={`px-4 py-2 font-mono text-xs transition-colors ${
                   rover === r.id
-                    ? "bg-mars-500/20 text-mars-300 border-r border-mars-500/20"
+                    ? "bg-mars-500/20 text-mars-300"
                     : "text-[var(--text-muted)] hover:text-[var(--text-secondary)]"
                 }`}
               >
-                {r.label}
-                <span className="ml-1 text-[var(--text-muted)]">({r.year})</span>
+                {r.emoji} {r.label}
               </button>
             ))}
           </div>
 
-          {/* Camera filter */}
+          {/* Keyword filter */}
           <div className="flex flex-wrap gap-2">
-            {cameras.map((c) => (
+            {KEYWORDS.map((k) => (
               <button
-                key={c.id}
-                onClick={() => { setCamera(c.id); setPage(1); }}
+                key={k.id}
+                onClick={() => { setKeyword(k.id); setPage(1); }}
                 className={`px-3 py-1 rounded font-mono text-[10px] border transition-colors ${
-                  camera === c.id
+                  keyword === k.id
                     ? "border-mars-500/60 bg-mars-500/15 text-mars-400"
                     : "border-white/10 text-[var(--text-muted)] hover:border-mars-500/30"
                 }`}
               >
-                {c.label}
+                {k.label}
               </button>
             ))}
           </div>
@@ -224,12 +231,13 @@ export default function RoverFeed() {
           </div>
         ) : photos.length === 0 ? (
           <div className="text-center py-20 text-[var(--text-muted)] font-mono text-sm">
-            此相機暫無照片
+            <Search size={24} className="mx-auto mb-3 opacity-30" />
+            此條件暫無照片
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
-            {photos.map((photo) => (
-              <PhotoCard key={photo.id} photo={photo} onClick={() => setSelected(photo)} />
+            {photos.map((item, i) => (
+              <PhotoCard key={`${item.data[0].nasa_id}-${i}`} item={item} onClick={() => setSelected(item)} />
             ))}
           </div>
         )}
@@ -244,7 +252,7 @@ export default function RoverFeed() {
             >
               <ChevronLeft size={12} /> 上一頁
             </button>
-            <span className="font-mono text-xs text-[var(--text-muted)]">Page {page}</span>
+            <span className="font-mono text-xs text-[var(--text-muted)]">第 {page} 頁</span>
             <button
               onClick={() => setPage((p) => p + 1)}
               className="flex items-center gap-1 px-4 py-2 font-mono text-xs border border-mars-500/20 rounded text-[var(--text-secondary)] hover:border-mars-500/40"
@@ -253,6 +261,10 @@ export default function RoverFeed() {
             </button>
           </div>
         )}
+
+        <p className="text-center font-mono text-[10px] text-[var(--text-muted)] mt-4">
+          資料來源：NASA Image &amp; Video Library · images-api.nasa.gov
+        </p>
       </div>
     </section>
   );

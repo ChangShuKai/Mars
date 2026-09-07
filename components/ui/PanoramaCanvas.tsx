@@ -2,160 +2,123 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// NASA/JPL Mars Curiosity First Color Panorama — Public Domain
+// NASA/JPL Mars Curiosity First Color Panorama — Public Domain (via Wikimedia)
 const PANORAMA_URL =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/NASA_Mars_Rover_Curiosity_-_First_Color_Panorama_-_pia15687.jpg/6000px-NASA_Mars_Rover_Curiosity_-_First_Color_Panorama_-_pia15687.jpg";
 
 export default function PanoramaCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const imgRef = useRef<HTMLImageElement | null>(null);
-  const stateRef = useRef({
-    offsetX: 0,
-    fov: 0.5, // viewport width ratio (0.3 = zoomed in, 1 = full width)
-    dragging: false,
-    lastX: 0,
-  });
-  const animRef = useRef<number>(0);
-  const [loading, setLoading] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
 
+  const state = useRef({
+    x: 0,
+    dragging: false,
+    startX: 0,
+    startOffsetX: 0,
+  });
+
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const container = containerRef.current;
+    const img = imgRef.current;
+    if (!container || !img) return;
 
-    let W = canvas.offsetWidth;
-    let H = canvas.offsetHeight;
-    canvas.width = W;
-    canvas.height = H;
+    const getMinX = () => -(img.offsetWidth - container.offsetWidth);
 
-    const onResize = () => {
-      W = canvas.width = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
-    };
-    window.addEventListener("resize", onResize);
+    const clamp = (val: number) => Math.max(getMinX(), Math.min(0, val));
 
-    const img = new Image();
-    img.crossOrigin = "anonymous";
-    imgRef.current = img;
-
-    const draw = () => {
-      if (!imgRef.current || !imgRef.current.complete) {
-        animRef.current = requestAnimationFrame(draw);
-        return;
-      }
-      const s = stateRef.current;
-      const iW = imgRef.current.naturalWidth;
-      const iH = imgRef.current.naturalHeight;
-
-      // Viewport width in source pixels
-      const srcW = iW * s.fov;
-      const srcH = (srcW / W) * H;
-      // Clamp srcH to image height
-      const clampedSrcH = Math.min(srcH, iH);
-      const srcY = (iH - clampedSrcH) / 2;
-
-      // Wrap offsetX
-      s.offsetX = ((s.offsetX % iW) + iW) % iW;
-      const srcX = s.offsetX * (1 - s.fov);
-
-      ctx.clearRect(0, 0, W, H);
-
-      // Draw panorama — handle wrap-around at seam
-      const remaining = iW - srcX;
-      if (remaining >= srcW) {
-        ctx.drawImage(imgRef.current, srcX, srcY, srcW, clampedSrcH, 0, 0, W, H);
-      } else {
-        const ratio = remaining / srcW;
-        ctx.drawImage(imgRef.current, srcX, srcY, remaining, clampedSrcH, 0, 0, W * ratio, H);
-        ctx.drawImage(imgRef.current, 0, srcY, srcW - remaining, clampedSrcH, W * ratio, 0, W * (1 - ratio), H);
-      }
-
-      animRef.current = requestAnimationFrame(draw);
+    const applyX = (x: number) => {
+      state.current.x = clamp(x);
+      img.style.transform = `translateX(${state.current.x}px)`;
     };
 
-    img.onload = () => {
-      setLoading(false);
-      draw();
-    };
-    img.onerror = () => {
-      setError(true);
-      setLoading(false);
-    };
-    img.src = PANORAMA_URL;
-
-    // Mouse events
+    // Mouse
     const onMouseDown = (e: MouseEvent) => {
-      stateRef.current.dragging = true;
-      stateRef.current.lastX = e.clientX;
+      state.current.dragging = true;
+      state.current.startX = e.clientX;
+      state.current.startOffsetX = state.current.x;
+      container.style.cursor = "grabbing";
     };
     const onMouseMove = (e: MouseEvent) => {
-      if (!stateRef.current.dragging) return;
-      const dx = e.clientX - stateRef.current.lastX;
-      stateRef.current.lastX = e.clientX;
-      stateRef.current.offsetX -= dx * stateRef.current.fov * 2;
+      if (!state.current.dragging) return;
+      applyX(state.current.startOffsetX + (e.clientX - state.current.startX));
     };
-    const onMouseUp = () => { stateRef.current.dragging = false; };
+    const onMouseUp = () => {
+      state.current.dragging = false;
+      container.style.cursor = "grab";
+    };
 
-    // Touch events
+    // Touch
     const onTouchStart = (e: TouchEvent) => {
-      stateRef.current.dragging = true;
-      stateRef.current.lastX = e.touches[0].clientX;
+      state.current.dragging = true;
+      state.current.startX = e.touches[0].clientX;
+      state.current.startOffsetX = state.current.x;
     };
     const onTouchMove = (e: TouchEvent) => {
-      if (!stateRef.current.dragging) return;
-      const dx = e.touches[0].clientX - stateRef.current.lastX;
-      stateRef.current.lastX = e.touches[0].clientX;
-      stateRef.current.offsetX -= dx * stateRef.current.fov * 2;
+      if (!state.current.dragging) return;
+      applyX(state.current.startOffsetX + (e.touches[0].clientX - state.current.startX));
     };
-    const onTouchEnd = () => { stateRef.current.dragging = false; };
+    const onTouchEnd = () => { state.current.dragging = false; };
 
-    // Wheel zoom
-    const onWheel = (e: WheelEvent) => {
-      e.preventDefault();
-      const s = stateRef.current;
-      s.fov = Math.max(0.2, Math.min(1, s.fov + e.deltaY * 0.0005));
+    // Centering after load
+    img.onload = () => {
+      setLoaded(true);
+      // Start centered on the most visually interesting part
+      applyX(-(img.offsetWidth / 2 - container.offsetWidth / 2));
     };
+    img.onerror = () => setError(true);
 
-    canvas.addEventListener("mousedown", onMouseDown);
+    container.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
-    canvas.addEventListener("touchstart", onTouchStart, { passive: true });
-    canvas.addEventListener("touchmove", onTouchMove, { passive: true });
-    canvas.addEventListener("touchend", onTouchEnd);
-    canvas.addEventListener("wheel", onWheel, { passive: false });
+    container.addEventListener("touchstart", onTouchStart, { passive: true });
+    container.addEventListener("touchmove", onTouchMove, { passive: true });
+    container.addEventListener("touchend", onTouchEnd);
 
     return () => {
-      cancelAnimationFrame(animRef.current);
-      window.removeEventListener("resize", onResize);
-      canvas.removeEventListener("mousedown", onMouseDown);
+      container.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
-      canvas.removeEventListener("touchstart", onTouchStart);
-      canvas.removeEventListener("touchmove", onTouchMove);
-      canvas.removeEventListener("touchend", onTouchEnd);
-      canvas.removeEventListener("wheel", onWheel);
+      container.removeEventListener("touchstart", onTouchStart);
+      container.removeEventListener("touchmove", onTouchMove);
+      container.removeEventListener("touchend", onTouchEnd);
     };
   }, []);
 
   return (
-    <div className="w-full h-full relative bg-space-950">
-      {loading && (
+    <div
+      ref={containerRef}
+      className="w-full h-full relative overflow-hidden bg-space-950 select-none"
+      style={{ cursor: "grab" }}
+    >
+      {/* Loading */}
+      {!loaded && !error && (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
           <div className="w-10 h-10 rounded-full border-2 border-orange-500 border-t-transparent animate-spin" />
-          <p className="text-orange-400 font-mono text-xs">載入全景圖...</p>
+          <p className="text-orange-400 font-mono text-xs tracking-widest">載入全景圖...</p>
         </div>
       )}
+      {/* Error */}
       {error && (
         <div className="absolute inset-0 flex items-center justify-center z-10">
           <p className="text-[var(--text-muted)] font-mono text-sm">無法載入全景圖像</p>
         </div>
       )}
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full cursor-grab active:cursor-grabbing"
-        style={{ display: loading || error ? "none" : "block" }}
+      {/* Panorama image — CSS drag, no canvas, no CORS */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        ref={imgRef}
+        src={PANORAMA_URL}
+        alt="Mars Curiosity First Colour Panorama"
+        className="absolute top-0 left-0 h-full w-auto max-w-none"
+        style={{
+          display: loaded ? "block" : "none",
+          willChange: "transform",
+          userSelect: "none",
+          pointerEvents: "none",
+        }}
+        draggable={false}
       />
     </div>
   );

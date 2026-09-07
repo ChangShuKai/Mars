@@ -1,0 +1,144 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --mars-primary: #e85d1a;
+  --mars-secondary: #c44612;
+  --mars-glow: rgba(232, 93, 26, 0.4);
+  --space-bg: #050508;
+  --text-primary: #f0ede8;
+  --text-secondary: #9d9387;
+  --text-muted: #5a5550;
+  --border-color: rgba(232, 93, 26, 0.2);
+  --card-bg: rgba(16, 16, 30, 0.7);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px;
+}
+
+body {
+  background: var(--space-bg);
+  color: var(--text-primary);
+  font-family: var(--font-display, system-ui, sans-serif);
+  overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--space-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mars-primary);
+  border-radius: 3px;
+}
+
+/* Selection */
+::selection {
+  background: rgba(232, 93, 26, 0.3);
+  color: #fff;
+}
+
+/* Utility classes */
+@layer utilities {
+  .mars-glow {
+    box-shadow: 0 0 20px var(--mars-glow), 0 0 60px rgba(232, 93, 26, 0.1);
+  }
+  .mars-border {
+    border: 1px solid var(--border-color);
+  }
+  .glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .text-gradient {
+    background: linear-gradient(135deg, #ff7b33, #e85d1a, #c44612);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-padding {
+    @apply px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto;
+  }
+}
+
+/* HUD scanline effect */
+.scanline-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Glitch text effect */
+.glitch-container {
+  position: relative;
+}
+.glitch-layer-1,
+.glitch-layer-2 {
+  position: absolute;
+  inset: 0;
+  opacity: 0.8;
+}
+.glitch-layer-1 {
+  color: #ff3c3c;
+  animation: glitch1 4s infinite;
+}
+.glitch-layer-2 {
+  color: #3cdfff;
+  animation: glitch2 4s infinite;
+}
+
+@keyframes glitch1 {
+  0%, 90%, 100% { clip-path: inset(0 0 100% 0); transform: none; }
+  5%  { clip-path: inset(10% 0 80% 0); transform: translate(-3px, 1px); }
+  10% { clip-path: inset(50% 0 30% 0); transform: translate(3px, -1px); }
+  15% { clip-path: inset(80% 0 5%  0); transform: translate(-2px, 0); }
+  20% { clip-path: inset(0 0 100% 0); transform: none; }
+}
+
+@keyframes glitch2 {
+  0%, 85%, 100% { clip-path: inset(0 0 100% 0); transform: none; }
+  87% { clip-path: inset(20% 0 60% 0); transform: translate(4px, 1px); }
+  92% { clip-path: inset(60% 0 20% 0); transform: translate(-4px, -1px); }
+  97% { clip-path: inset(0 0 100% 0); transform: none; }
+}
+
+/* Data pulse animation */
+@keyframes dataPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+.data-pulse { animation: dataPulse 2s ease-in-out infinite; }
+
+/* Terminal cursor */
+.terminal-cursor::after {
+  content: "█";
+  animation: blink 1s step-end infinite;
+  color: var(--mars-primary);
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

@@ -1340,7 +1340,7 @@ export default function MarsMapSection() {
             )}
 
             {/* ── Mission Markers (Rovers, Helicopters, Landers) ────────── */}
-            {MISSIONS.map((m) => {
+            {missions.map((m) => {
               const pos = toPercent(m.lat, m.lon);
               const isSel = selected?.id === m.id;
               const isHeli = m.category === "helicopter";
@@ -1481,6 +1481,13 @@ export default function MarsMapSection() {
                     </span>
                   </div>
 
+                  {selected.isLiveTelemetry && (
+                    <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-mono text-[10px] mb-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      NASA JPL 即時遙測已同步 · Drive #{selected.driveId ?? "---"}
+                    </div>
+                  )}
+
                   <h3 className="font-display font-bold text-white text-2xl leading-snug flex items-center gap-2">
                     {selected.name}
                     {selected.category === "helicopter" && (
@@ -1503,7 +1510,9 @@ export default function MarsMapSection() {
               <div className="p-5 space-y-4 text-xs">
                 <div className="grid grid-cols-2 gap-2 p-2.5 rounded-xl bg-white/[0.03] border border-white/5 font-mono text-[11px]">
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[10px]">著陸坐標</span>
+                    <span className="text-[var(--text-muted)] block text-[10px]">
+                      {selected.isLiveTelemetry ? "當前即時坐標" : "著陸坐標"}
+                    </span>
                     <span className="text-slate-200">
                       {Math.abs(selected.lat).toFixed(4)}°
                       {selected.lat >= 0 ? "N" : "S"},{" "}
@@ -1512,10 +1521,20 @@ export default function MarsMapSection() {
                     </span>
                   </div>
                   <div>
-                    <span className="text-[var(--text-muted)] block text-[10px]">著陸日期</span>
-                    <span className="text-slate-200">{selected.landed}</span>
+                    <span className="text-[var(--text-muted)] block text-[10px]">
+                      {selected.distKm !== undefined ? "累計行駛距離" : "著陸日期"}
+                    </span>
+                    <span className="text-slate-200">
+                      {selected.distKm !== undefined ? `${selected.distKm} km` : selected.landed}
+                    </span>
                   </div>
-                  <div className="col-span-2 pt-1 border-t border-white/5">
+                  {selected.elevation !== undefined && (
+                    <div>
+                      <span className="text-[var(--text-muted)] block text-[10px]">火星大地高程</span>
+                      <span className="text-slate-200">{selected.elevation} m</span>
+                    </div>
+                  )}
+                  <div className={selected.elevation !== undefined ? "" : "col-span-2 pt-1 border-t border-white/5"}>
                     <span className="text-[var(--text-muted)] block text-[10px]">探測區域</span>
                     <span className="text-orange-300">{selected.location}</span>
                   </div>

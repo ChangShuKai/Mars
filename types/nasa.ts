@@ -198,6 +198,7 @@ export interface RoverWaypointProperty {
   roll?: number;
   pitch?: number;
   yaw?: number;
+  tilt?: number;
   dist_m?: number;
   dist_total_m?: number;
   dist_km?: number;

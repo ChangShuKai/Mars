@@ -56,8 +56,8 @@ export default function StarField() {
         star.px = star.x / (star.z / W) + W / 2;
         star.py = star.y / (star.z / W) + H / 2;
 
-        const size = (1 - star.z / W) * 3;
-        const opacity = (1 - star.z / W) * 0.9;
+        const size = Math.max(0.1, (1 - star.z / W) * 3);
+        const opacity = Math.max(0, Math.min(1, (1 - star.z / W) * 0.9));
 
         // Streak trail
         const trailX = star.x / ((star.z + speed) / W) + W / 2;

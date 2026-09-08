@@ -2,9 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 
-// NASA/JPL Mars Curiosity First Color Panorama — Public Domain (via Wikimedia)
-const PANORAMA_URL =
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/NASA_Mars_Rover_Curiosity_-_First_Color_Panorama_-_pia15687.jpg/6000px-NASA_Mars_Rover_Curiosity_-_First_Color_Panorama_-_pia15687.jpg";
+// NASA/JPL-Caltech Perseverance Mastcam-Z 360 Panorama (Local asset)
+const PANORAMA_URL = "/mars-panorama.jpg";
 
 export default function PanoramaCanvas() {
   const containerRef = useRef<HTMLDivElement>(null);

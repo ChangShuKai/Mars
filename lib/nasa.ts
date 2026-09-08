@@ -100,3 +100,74 @@ export async function fetchNasaImages(query: string, mediaType = "image", pageSi
   if (!res.ok) throw new Error(`NASA Images API error: ${res.status}`);
   return res.json();
 }
+
+// ─── Mars Live Weather Services (Perseverance MEDA & Curiosity REMS) ───
+
+export async function fetchPerseveranceWeather() {
+  const url = "https://mars.nasa.gov/rss/api/?feed=weather&category=mars2020&feedtype=json";
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "Mars-Explorer/1.0",
+      "Accept": "application/json",
+    },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) throw new Error(`Perseverance weather API error: ${res.status}`);
+  return res.json();
+}
+
+export async function fetchCuriosityWeather() {
+  const url = "https://mars.nasa.gov/rss/api/?feed=weather&category=msl&feedtype=json";
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "Mars-Explorer/1.0",
+      "Accept": "application/json",
+    },
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) throw new Error(`Curiosity weather API error: ${res.status}`);
+  return res.json();
+}
+
+// ─── Rover Real-time Location & Telemetry (Where is the Rover / MMGIS) ───
+
+export async function fetchRoverTelemetry(rover: "M20" | "MSL") {
+  // 1. Try Where is the Rover REST API first
+  const restUrl = `https://mars.nasa.gov/maps/location/api/v1/sites/${rover}`;
+  try {
+    const res = await fetch(restUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)",
+        "Referer": "https://mars.nasa.gov/",
+        "Accept": "application/json",
+      },
+      next: { revalidate: 1800 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.features && data.features.length > 0) {
+        return data;
+      }
+    }
+  } catch {
+    // Fall back to MMGIS endpoint below
+  }
+
+  // 2. Fallback to active MMGIS Waypoints GeoJSON
+  const mmgisUrl = `https://mars.nasa.gov/mmgis-maps/${rover}/Layers/json/${rover}_waypoints.json`;
+  const mmgisRes = await fetch(mmgisUrl, {
+    headers: {
+      "User-Agent": "Mars-Explorer/1.0",
+      "Referer": "https://mars.nasa.gov/",
+      "Accept": "application/json",
+    },
+    next: { revalidate: 1800 },
+  });
+
+  if (!mmgisRes.ok) {
+    throw new Error(`Rover telemetry API error (${rover}): ${mmgisRes.status}`);
+  }
+
+  return mmgisRes.json();
+}
+

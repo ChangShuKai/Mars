@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
 const NAV_ITEMS = [
+  { label: "地圖", href: "#map" },
   { label: "全景", href: "#panorama" },
   { label: "氣象站", href: "#insight" },
   { label: "探測車", href: "#rovers" },

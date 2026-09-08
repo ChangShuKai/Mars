@@ -1,5 +1,6 @@
 import Navigation from "@/components/ui/Navigation";
 import HeroSection from "@/components/sections/HeroSection";
+import MarsMapSection from "@/components/sections/MarsMapSection";
 import PanoramaViewer from "@/components/sections/PanoramaViewer";
 import InsightStation from "@/components/sections/InsightStation";
 import RoverFeed from "@/components/sections/RoverFeed";
@@ -13,6 +14,7 @@ export default function Home() {
     <main className="relative">
       <Navigation />
       <HeroSection />
+      <MarsMapSection />
       <PanoramaViewer />
       <InsightStation />
       <RoverFeed />

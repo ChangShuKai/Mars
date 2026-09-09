@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Space_Mono, Rajdhani } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,11 @@ const rajdhani = Rajdhani({
   variable: "--font-display",
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: "#050508",
+  colorScheme: "dark",
+};
 
 export const metadata: Metadata = {
   title: "Mars Explorer — NASA Live Data",

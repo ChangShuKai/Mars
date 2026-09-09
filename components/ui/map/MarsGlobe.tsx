@@ -18,7 +18,7 @@ const MapMaterial = ({ hd }: { hd: boolean }) => {
     }
   }, []);
 
-  const onBeforeCompile = (shader: any) => {
+  const onBeforeCompile = (shader: THREE.Shader) => {
     if (!materialRef.current) return;
     shader.uniforms.uMorph = materialRef.current.userData.uMorph;
     shader.vertexShader = `

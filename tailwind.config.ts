@@ -34,37 +34,7 @@ const config: Config = {
         display: ["var(--font-display)", "system-ui", "sans-serif"],
       },
       animation: {
-        "glitch-1": "glitch1 2s infinite",
-        "glitch-2": "glitch2 2s infinite",
         "pulse-slow": "pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        "orbit": "orbit 8s linear infinite",
-        "scanline": "scanline 6s linear infinite",
-        "flicker": "flicker 0.15s infinite",
-      },
-      keyframes: {
-        glitch1: {
-          "0%, 95%, 100%": { clipPath: "inset(0 0 100% 0)", transform: "none" },
-          "5%":  { clipPath: "inset(10% 0 80% 0)", transform: "translate(-3px, 0)" },
-          "10%": { clipPath: "inset(50% 0 30% 0)", transform: "translate(3px, 0)" },
-          "15%": { clipPath: "inset(80% 0 5%  0)", transform: "translate(-1px, 0)" },
-        },
-        glitch2: {
-          "0%, 90%, 100%": { clipPath: "inset(0 0 100% 0)", transform: "none" },
-          "92%": { clipPath: "inset(20% 0 60% 0)", transform: "translate(4px, 0)" },
-          "96%": { clipPath: "inset(70% 0 10% 0)", transform: "translate(-4px, 0)" },
-        },
-        orbit: {
-          from: { transform: "rotate(0deg) translateX(30px) rotate(0deg)" },
-          to:   { transform: "rotate(360deg) translateX(30px) rotate(-360deg)" },
-        },
-        scanline: {
-          "0%":   { transform: "translateY(-100%)" },
-          "100%": { transform: "translateY(100vh)" },
-        },
-        flicker: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.85" },
-        },
       },
       backgroundImage: {
         "mars-gradient":

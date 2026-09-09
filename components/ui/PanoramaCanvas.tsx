@@ -61,11 +61,17 @@ export default function PanoramaCanvas() {
     const onTouchEnd = () => { state.current.dragging = false; };
 
     // Centering after load
-    img.onload = () => {
+    const handleLoad = () => {
       setLoaded(true);
       // Start centered on the most visually interesting part
       applyX(-(img.offsetWidth / 2 - container.offsetWidth / 2));
     };
+
+    if (img.complete) {
+      handleLoad();
+    } else {
+      img.onload = handleLoad;
+    }
     img.onerror = () => setError(true);
 
     container.addEventListener("mousedown", onMouseDown);

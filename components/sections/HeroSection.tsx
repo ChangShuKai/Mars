@@ -11,21 +11,30 @@ interface MarsData {
   mars_sol: number;
 }
 
+function ClockDisplay() {
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
+  
+  useEffect(() => {
+    setCurrentTime(new Date());
+    const id = window.setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  return (
+    <span className="text-[var(--text-secondary)] text-sm terminal-cursor">
+      {currentTime?.toUTCString().replace("GMT", "UTC") ?? "---"}
+    </span>
+  );
+}
+
 export default function HeroSection() {
   const [marsData, setMarsData] = useState<MarsData | null>(null);
-  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
     fetch("/api/mars-distance")
       .then((r) => r.json())
       .then(setMarsData)
       .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    setCurrentTime(new Date());
-    const id = window.setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => window.clearInterval(id);
   }, []);
 
   // Mars Sol calculation (Curiosity reference)
@@ -121,9 +130,7 @@ export default function HeroSection() {
           </div>
           <div className="flex flex-col items-center col-span-2 sm:col-span-3 border-t border-mars-500/10 pt-3 mt-1">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">地球時間 (UTC)</span>
-            <span className="text-[var(--text-secondary)] text-sm terminal-cursor">
-              {currentTime?.toUTCString().replace("GMT", "UTC") ?? "---"}
-            </span>
+            <ClockDisplay />
           </div>
         </motion.div>
       </div>

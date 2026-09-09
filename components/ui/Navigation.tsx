@@ -69,10 +69,11 @@ export default function Navigation() {
             </a>
           </div>
 
-          {/* Mobile toggle */}
           <button
             className="md:hidden text-[var(--text-secondary)] hover:text-white"
             onClick={() => setMobileOpen(!mobileOpen)}
+            aria-label="Toggle mobile menu"
+            aria-expanded={mobileOpen}
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>

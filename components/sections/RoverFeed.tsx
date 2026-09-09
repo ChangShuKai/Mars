@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, ChevronLeft, ChevronRight, ExternalLink, X, Search } from "lucide-react";
 import Image from "next/image";
@@ -32,7 +32,7 @@ const KEYWORDS = [
   { id: "selfie", label: "自拍" },
 ];
 
-function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: () => void }) {
+const PhotoCard = React.memo(function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: (item: NasaImageItem) => void }) {
   const thumb = item.links?.find((l) => l.rel === "preview")?.href;
   const data = item.data[0];
   const date = data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : "";
@@ -44,7 +44,7 @@ function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: () => void
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="glass-card rounded-xl overflow-hidden border border-white/5 hover:border-mars-500/30 transition-all duration-300 cursor-pointer group"
-      onClick={onClick}
+      onClick={() => onClick(item)}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-space-800">
         <Image
@@ -68,7 +68,7 @@ function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: () => void
       </div>
     </motion.div>
   );
-}
+});
 
 function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void }) {
   const data = item.data[0];
@@ -240,7 +240,7 @@ export default function RoverFeed() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {photos.map((item, i) => (
-              <PhotoCard key={`${item.data[0].nasa_id}-${i}`} item={item} onClick={() => setSelected(item)} />
+              <PhotoCard key={`${item.data[0].nasa_id}-${i}`} item={item} onClick={setSelected} />
             ))}
           </div>
         )}

@@ -11,16 +11,31 @@ import Footer from "@/components/ui/Footer";
 
 export default function Home() {
   return (
-    <main className="relative">
-      <Navigation />
-      <HeroSection />
-      <MarsMapSection />
-      <PanoramaViewer />
-      <InsightStation />
-      <RoverFeed />
-      <MarsFacts />
-      <MissionTimeline />
-      <ApodSection />
+    <main className="relative bg-space-950 text-white selection:bg-mars-500/30 selection:text-white flex flex-col gap-20 md:gap-32 overflow-hidden">
+      {/* Seamless global background to tie the page together */}
+      <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-space-900 via-space-950 to-black opacity-80" />
+      
+      <div className="relative z-10 flex flex-col gap-24 md:gap-40">
+        <Navigation />
+        <HeroSection />
+        
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-mars-500/20 to-transparent" />
+        
+        <MarsMapSection />
+        
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-mars-500/20 to-transparent" />
+
+        <PanoramaViewer />
+        <InsightStation />
+        <RoverFeed />
+        <MarsFacts />
+        
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-mars-500/20 to-transparent" />
+        
+        <MissionTimeline />
+        <ApodSection />
+      </div>
+
       <Footer />
     </main>
   );

@@ -1,12 +1,13 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mars-explorer.vercel.app';
+
   return {
     rules: {
       userAgent: "*",
       allow: "/",
     },
-    // Replace with your actual domain when deploying
-    sitemap: "https://your-domain.com/sitemap.xml",
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

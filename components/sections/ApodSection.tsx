@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, Star, Calendar } from "lucide-react";
+import Image from "next/image";
 import type { ApodResponse } from "@/types/nasa";
 
 export default function ApodSection() {
@@ -55,11 +56,12 @@ export default function ApodSection() {
             {/* Media */}
             <div className="relative aspect-video bg-space-900">
               {apod.media_type === "image" ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={apod.hdurl || apod.url}
                   alt={apod.title}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  className="object-cover"
                 />
               ) : (
                 <iframe

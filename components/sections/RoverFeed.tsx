@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Camera, ChevronLeft, ChevronRight, ExternalLink, X, Search } from "lucide-react";
+import Image from "next/image";
 
 interface NasaImageItem {
   href: string;
@@ -46,15 +47,15 @@ function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: () => void
       onClick={onClick}
     >
       <div className="relative aspect-[4/3] overflow-hidden bg-space-800">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+        <Image
           src={thumb}
           alt={data.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
+          fill
+          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-space-950/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-space-950/80 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-2 right-2">
           <Camera size={10} className="text-mars-300/70" />
         </div>
@@ -92,12 +93,14 @@ function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void 
           <X size={24} />
         </button>
         {thumb && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={thumb.replace("~thumb", "~medium")}
-            alt={data.title}
-            className="w-full rounded-lg max-h-[65vh] object-contain bg-space-900"
-          />
+          <div className="relative w-full rounded-lg bg-space-900 overflow-hidden" style={{ height: '65vh' }}>
+            <Image
+              src={thumb.replace("~thumb", "~medium")}
+              alt={data.title}
+              fill
+              className="object-contain"
+            />
+          </div>
         )}
         <div className="mt-4 glass-card rounded-xl p-4">
           <h3 className="text-white font-display font-semibold mb-1">{data.title}</h3>

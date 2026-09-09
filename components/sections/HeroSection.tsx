@@ -24,8 +24,8 @@ export default function HeroSection() {
 
   useEffect(() => {
     setCurrentTime(new Date());
-    const id = setInterval(() => setCurrentTime(new Date()), 1000);
-    return () => clearInterval(id);
+    const id = window.setInterval(() => setCurrentTime(new Date()), 1000);
+    return () => window.clearInterval(id);
   }, []);
 
   // Mars Sol calculation (Curiosity reference)

@@ -27,16 +27,23 @@ export default function CountUp({
     const startTime = performance.now();
     const startValue = 0;
 
+    let frameId: number;
     const animate = (now: number) => {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setValue(startValue + (end - startValue) * eased);
-      if (progress < 1) requestAnimationFrame(animate);
+      if (progress < 1) {
+        frameId = requestAnimationFrame(animate);
+      }
     };
 
-    requestAnimationFrame(animate);
+    frameId = requestAnimationFrame(animate);
+    
+    return () => {
+      if (frameId) cancelAnimationFrame(frameId);
+    };
   }, [inView, end, duration]);
 
   const formatted =

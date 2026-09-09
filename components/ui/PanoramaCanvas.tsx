@@ -118,6 +118,8 @@ export default function PanoramaCanvas() {
           pointerEvents: "none",
         }}
         draggable={false}
+        fetchPriority="high"
+        decoding="async"
       />
     </div>
   );

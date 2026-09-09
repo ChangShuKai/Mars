@@ -53,9 +53,16 @@ export default function CountUp({
 
   return (
     <span ref={ref}>
-      {prefix}
-      {formatted}
-      {suffix}
+      <span aria-hidden="true">
+        {prefix}
+        {formatted}
+        {suffix}
+      </span>
+      <span className="sr-only">
+        {prefix}
+        {decimals > 0 ? end.toFixed(decimals) : Math.round(end).toLocaleString()}
+        {suffix}
+      </span>
     </span>
   );
 }

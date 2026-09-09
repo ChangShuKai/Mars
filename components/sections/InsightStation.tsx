@@ -275,7 +275,7 @@ export default function InsightStation() {
         </motion.div>
 
         {/* Station Switcher Tabs */}
-        <div className="flex flex-wrap gap-3 mb-8">
+        <div className="flex flex-wrap gap-3 mb-8" role="tablist" aria-label="Mars Weather Stations">
           {([
             {
               key: "perseverance",
@@ -309,6 +309,8 @@ export default function InsightStation() {
             return (
               <button
                 key={st.key}
+                role="tab"
+                aria-selected={isActive}
                 onClick={() => {
                   setActiveStation(st.key);
                   setSelectedSolIndex(null);

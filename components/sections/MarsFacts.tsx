@@ -130,7 +130,7 @@ export default function MarsFacts() {
                 <span className="text-3xl font-display font-bold text-white group-hover:text-mars-300 transition-colors">
                   {fact.prefix ?? ""}
                   <CountUp
-                    end={Math.abs(fact.value)}
+                    end={fact.value}
                     decimals={fact.decimals}
                     duration={1800}
                   />

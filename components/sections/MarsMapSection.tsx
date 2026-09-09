@@ -1,21 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Wind,
   Thermometer,
   Gauge,
   X,
-  ZoomIn,
-  ZoomOut,
-  Maximize2,
   Radio,
-  AlertTriangle,
-  Layers,
-  Sparkles,
   Plane,
-  Compass,
   DownloadCloud,
 } from "lucide-react";
 

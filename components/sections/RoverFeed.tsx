@@ -186,10 +186,11 @@ export default function RoverFeed() {
         {/* Controls */}
         <div className="flex flex-wrap items-center gap-3 mb-8">
           {/* Rover toggle */}
-          <div className="flex rounded-lg border border-mars-500/20 overflow-hidden">
+          <div className="flex rounded-lg border border-mars-500/20 overflow-hidden" role="group" aria-label="Rover Selection">
             {ROVERS.map((r) => (
               <button
                 key={r.id}
+                aria-pressed={rover === r.id}
                 onClick={() => { setRover(r.id); setPage(1); }}
                 className={`px-4 py-2 font-mono text-xs transition-colors ${
                   rover === r.id
@@ -203,10 +204,11 @@ export default function RoverFeed() {
           </div>
 
           {/* Keyword filter */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="group" aria-label="Keyword Filter">
             {KEYWORDS.map((k) => (
               <button
                 key={k.id}
+                aria-pressed={keyword === k.id}
                 onClick={() => { setKeyword(k.id); setPage(1); }}
                 className={`px-3 py-1 rounded font-mono text-[10px] border transition-colors ${
                   keyword === k.id

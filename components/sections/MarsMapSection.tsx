@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 
 // ── Mission data with Flight Sites & Probes ──────────────────────────────────
-interface Mission {
+export interface Mission {
   id: string;
   name: string;
   nameEn: string;

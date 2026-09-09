@@ -6,7 +6,7 @@ import { OrbitControls, Html, useTexture, Stars } from "@react-three/drei";
 import * as THREE from "three";
 import { Plane } from "lucide-react";
 
-type Mission = any;
+import type { Mission } from "../sections/MarsMapSection";
 
 const MapMaterial = ({ hd }: { hd: boolean }) => {
   const mapTex = useTexture(hd ? "/mars-map-hd.jpg" : "/mars-map.jpg");

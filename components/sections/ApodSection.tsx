@@ -69,6 +69,7 @@ export default function ApodSection() {
                   title={apod.title}
                   className="w-full h-full"
                   allowFullScreen
+                  loading="lazy"
                 />
               )}
               {/* Overlay */}

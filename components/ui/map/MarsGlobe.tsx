@@ -116,10 +116,12 @@ const Marker = ({ mission, isGlobe, isSelected, onClick }: { mission: Mission, i
   return (
     <group ref={groupRef}>
       <Html center style={{ pointerEvents: 'none' }}>
-        <div 
-           className="relative flex flex-col items-center group cursor-pointer"
+        <button 
+           className="relative flex flex-col items-center group cursor-pointer border-none bg-transparent outline-none p-0"
            style={{ pointerEvents: 'auto' }}
            onClick={onClick}
+           aria-label={`View details for ${mission.name}`}
+           aria-pressed={isSelected}
         >
           {isHeli ? (
             <div
@@ -151,7 +153,7 @@ const Marker = ({ mission, isGlobe, isSelected, onClick }: { mission: Mission, i
           >
             <span className="font-bold">{mission.name}</span>
           </div>
-        </div>
+        </button>
       </Html>
     </group>
   );

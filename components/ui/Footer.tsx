@@ -1,6 +1,6 @@
 "use client";
 
-import { Rocket, Github, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 
 const LINKS = [
   { label: "NASA API Portal", href: "https://api.nasa.gov" },

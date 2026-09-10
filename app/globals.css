@@ -102,11 +102,11 @@ body {
   opacity: 0.8;
 }
 .glitch-layer-1 {
-  color: #ff3c3c;
+  color: var(--mars-primary);
   animation: glitch1 4s infinite;
 }
 .glitch-layer-2 {
-  color: #3cdfff;
+  color: #38bdf8; /* Tailwind light blue */
   animation: glitch2 4s infinite;
 }
 

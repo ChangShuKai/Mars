@@ -4,6 +4,7 @@ import MarsMapSection from "@/components/sections/MarsMapSection";
 import PanoramaViewer from "@/components/sections/PanoramaViewer";
 import InsightStation from "@/components/sections/InsightStation";
 import RoverFeed from "@/components/sections/RoverFeed";
+import RawImagesSection from "@/components/sections/RawImagesSection";
 import MarsFacts from "@/components/sections/MarsFacts";
 import MissionTimeline from "@/components/sections/MissionTimeline";
 import ApodSection from "@/components/sections/ApodSection";
@@ -28,6 +29,7 @@ export default function Home() {
         <PanoramaViewer />
         <InsightStation />
         <RoverFeed />
+        <RawImagesSection />
         <MarsFacts />
         
         <div className="w-full h-px bg-gradient-to-r from-transparent via-mars-500/20 to-transparent" />

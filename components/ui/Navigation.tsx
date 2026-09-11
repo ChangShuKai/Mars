@@ -19,10 +19,34 @@ export default function Navigation() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const [activeSection, setActiveSection] = useState("");
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    
+    // Intersection Observer for sections
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { rootMargin: "-20% 0px -80% 0px" } // trigger when near top
+    );
+    
+    NAV_ITEMS.forEach((item) => {
+      const id = item.href.replace("#", "");
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      observer.disconnect();
+    };
   }, []);
 
   useEffect(() => {
@@ -59,15 +83,23 @@ export default function Navigation() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="font-mono text-xs text-[var(--text-secondary)] hover:text-mars-400 transition-colors tracking-wider uppercase"
-              >
-                {item.label}
-              </Link>
-            ))}
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.href.replace("#", "");
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`font-mono text-xs tracking-wider uppercase transition-colors ${
+                    isActive
+                      ? "text-mars-400 font-bold border-b border-mars-400"
+                      : "text-[var(--text-secondary)] hover:text-mars-300"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
             <a
               href="https://api.nasa.gov"
               target="_blank"
@@ -96,18 +128,26 @@ export default function Navigation() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="fixed top-16 left-0 right-0 z-40 bg-space-900/95 backdrop-blur-md border-b border-mars-500/20 py-4"
+            className="fixed top-16 left-0 right-0 z-40 bg-space-900/95 backdrop-blur-md border-b border-mars-500/20 py-8"
           >
-            {NAV_ITEMS.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="block px-6 py-2 font-mono text-sm text-[var(--text-secondary)] hover:text-mars-400 tracking-wider uppercase"
-              >
-                {item.label}
-              </Link>
-            ))}
+            <div className="flex flex-col gap-6 font-mono text-center">
+              {NAV_ITEMS.map((item) => {
+                const isActive = activeSection === item.href.replace("#", "");
+                return (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    aria-current={isActive ? "page" : undefined}
+                    onClick={() => setMobileOpen(false)}
+                    className={`text-2xl tracking-widest uppercase transition-colors ${
+                      isActive ? "text-mars-400 font-bold" : "text-white hover:text-mars-400"
+                    }`}
+                  >
+                    {item.label}
+                  </Link>
+                );
+              })}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

@@ -140,17 +140,19 @@ export default function HeroSection() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1, delay: 2 }}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10"
       >
-        <span className="font-mono text-xs text-[var(--text-muted)] tracking-widest uppercase">
-          向下探索
-        </span>
-        <motion.div
-          animate={{ y: [0, 8, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <ChevronDown size={20} className="text-mars-500" />
-        </motion.div>
+        <a href="#map" className="flex flex-col items-center gap-2 group cursor-pointer" aria-label="Scroll to map section">
+          <span className="font-mono text-xs text-[var(--text-muted)] group-hover:text-mars-400 transition-colors tracking-widest uppercase">
+            向下探索
+          </span>
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <ChevronDown size={20} className="text-mars-500 group-hover:text-mars-400 transition-colors" />
+          </motion.div>
+        </a>
       </motion.div>
 
       {/* Bottom gradient */}

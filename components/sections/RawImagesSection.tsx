@@ -212,8 +212,10 @@ export default function RawImagesSection() {
         </motion.div>
 
         {/* Tabs */}
-        <div className="flex flex-wrap gap-2 mb-10 border-b border-white/10 pb-4">
+        <div className="flex flex-wrap gap-2 mb-10 border-b border-white/10 pb-4" role="tablist" aria-label="Rover Selection">
           <button
+            role="tab"
+            aria-selected={activeTab === "msl"}
             onClick={() => setActiveTab("msl")}
             className={`px-6 py-3 rounded-t-lg font-display font-medium transition-colors ${
               activeTab === "msl"
@@ -224,6 +226,8 @@ export default function RawImagesSection() {
             好奇號 (Curiosity)
           </button>
           <button
+            role="tab"
+            aria-selected={activeTab === "m2020"}
             onClick={() => setActiveTab("m2020")}
             className={`px-6 py-3 rounded-t-lg font-display font-medium transition-colors ${
               activeTab === "m2020"

@@ -110,7 +110,7 @@ export async function fetchPerseveranceWeather() {
       "User-Agent": "Mars-Explorer/1.0",
       "Accept": "application/json",
     },
-    next: { revalidate: 3600 },
+    cache: "no-store", // NASA M2020 payload grows over time, bypass 2MB Next.js cache limit
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`Perseverance weather API error: ${res.status}`);
@@ -124,7 +124,7 @@ export async function fetchCuriosityWeather() {
       "User-Agent": "Mars-Explorer/1.0",
       "Accept": "application/json",
     },
-    next: { revalidate: 3600 },
+    cache: "no-store", // NASA MSL payload is ~2.3MB, exceeding Next.js 2MB fetch cache limit. Route handler caches the result instead.
     signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`Curiosity weather API error: ${res.status}`);

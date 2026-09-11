@@ -576,6 +576,8 @@ export default function InsightStation() {
                       <button
                         key={item.sol}
                         onClick={() => setSelectedSolIndex(idx)}
+                        aria-pressed={isSelected}
+                        aria-label={`View Sol ${item.sol} data`}
                         className={`p-3 rounded-xl border text-left font-mono transition-all ${
                           isSelected
                             ? "bg-mars-500/20 border-mars-400 text-white shadow-md shadow-mars-500/20 ring-1 ring-mars-400"

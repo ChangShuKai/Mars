@@ -64,7 +64,7 @@ const PhotoCard = React.memo(function PhotoCard({ item, onClick }: { item: NasaI
         <p className="font-display text-xs text-[var(--text-secondary)] line-clamp-2 mb-1 leading-tight">
           {data.title}
         </p>
-        <p className="font-mono text-[9px] text-[var(--text-muted)]">{date}</p>
+        <time className="font-mono text-[9px] text-[var(--text-muted)]" dateTime={data.date_created}>{date}</time>
       </div>
     </motion.div>
   );
@@ -113,7 +113,7 @@ function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void 
         <div className="mt-4 glass-card rounded-xl p-4">
           <h3 className="text-white font-display font-semibold mb-1">{data.title}</h3>
           <p className="font-mono text-[10px] text-[var(--text-muted)] mb-2">
-            {data.center} · {data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : ""}
+            {data.center} · <time dateTime={data.date_created}>{data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : ""}</time>
           </p>
           <p className="text-[var(--text-secondary)] text-sm font-display leading-relaxed line-clamp-3">
             {data.description}

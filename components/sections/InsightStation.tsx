@@ -311,6 +311,7 @@ export default function InsightStation() {
                 key={st.key}
                 role="tab"
                 aria-selected={isActive}
+                tabIndex={isActive ? 0 : -1}
                 onClick={() => {
                   setActiveStation(st.key);
                   setSelectedSolIndex(null);

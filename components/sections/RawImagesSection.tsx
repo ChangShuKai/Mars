@@ -216,6 +216,7 @@ export default function RawImagesSection() {
           <button
             role="tab"
             aria-selected={activeTab === "msl"}
+            tabIndex={activeTab === "msl" ? 0 : -1}
             onClick={() => setActiveTab("msl")}
             className={`px-6 py-3 rounded-t-lg font-display font-medium transition-colors ${
               activeTab === "msl"
@@ -228,6 +229,7 @@ export default function RawImagesSection() {
           <button
             role="tab"
             aria-selected={activeTab === "m2020"}
+            tabIndex={activeTab === "m2020" ? 0 : -1}
             onClick={() => setActiveTab("m2020")}
             className={`px-6 py-3 rounded-t-lg font-display font-medium transition-colors ${
               activeTab === "m2020"

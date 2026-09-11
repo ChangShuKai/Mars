@@ -109,7 +109,7 @@ export default function MarsFacts() {
         </motion.div>
 
         {/* Facts grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {FACTS.map((fact, i) => (
             <motion.div
               key={fact.label}
@@ -117,16 +117,16 @@ export default function MarsFacts() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.06 }}
-              className="glass-card rounded-xl p-6 border border-mars-500/10 hover:border-mars-500/30 transition-all duration-300 group"
+              className="glass-card rounded-xl p-6 border border-mars-500/10 hover:border-mars-500/30 transition-all duration-300 group flex flex-col"
             >
-              <div className="flex items-start justify-between mb-3">
-                <span className="text-2xl">{fact.icon}</span>
+              <dt className="flex items-start justify-between mb-3 order-1">
+                <span className="text-2xl" aria-hidden="true">{fact.icon}</span>
                 <span className="font-mono text-[10px] text-[var(--text-muted)] tracking-wider uppercase group-hover:text-mars-400 transition-colors">
                   {fact.label}
                 </span>
-              </div>
+              </dt>
 
-              <div className="flex items-baseline gap-2 mb-1">
+              <dd className="flex items-baseline gap-2 mb-1 order-2">
                 <span className="text-3xl font-display font-bold text-white group-hover:text-mars-300 transition-colors">
                   {fact.prefix ?? ""}
                   <CountUp
@@ -136,12 +136,12 @@ export default function MarsFacts() {
                   />
                 </span>
                 <span className="font-mono text-sm text-[var(--text-muted)]">{fact.unit}</span>
-              </div>
+              </dd>
 
-              <p className="font-mono text-[10px] text-[var(--text-muted)]">{fact.sub}</p>
+              <dd className="font-mono text-[10px] text-[var(--text-muted)] order-3">{fact.sub}</dd>
             </motion.div>
           ))}
-        </div>
+        </dl>
 
         {/* Atmospheric composition bar */}
         <motion.div

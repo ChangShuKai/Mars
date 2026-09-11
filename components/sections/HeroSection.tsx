@@ -21,7 +21,7 @@ function ClockDisplay() {
   }, []);
 
   return (
-    <span className="text-[var(--text-secondary)] text-sm terminal-cursor">
+    <span className="text-[var(--text-secondary)] text-sm terminal-cursor" aria-label="Current Earth Time" aria-live="off">
       {currentTime?.toUTCString().replace("GMT", "UTC") ?? "---"}
     </span>
   );

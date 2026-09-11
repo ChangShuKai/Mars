@@ -74,6 +74,14 @@ function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void 
   const data = item.data[0];
   const thumb = item.links?.find((l) => l.rel === "preview")?.href;
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   return (
     <motion.div
       initial={{ opacity: 0 }}

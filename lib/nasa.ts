@@ -111,6 +111,7 @@ export async function fetchPerseveranceWeather() {
       "Accept": "application/json",
     },
     next: { revalidate: 3600 },
+    signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`Perseverance weather API error: ${res.status}`);
   return res.json();
@@ -124,6 +125,7 @@ export async function fetchCuriosityWeather() {
       "Accept": "application/json",
     },
     next: { revalidate: 3600 },
+    signal: AbortSignal.timeout(8000),
   });
   if (!res.ok) throw new Error(`Curiosity weather API error: ${res.status}`);
   return res.json();

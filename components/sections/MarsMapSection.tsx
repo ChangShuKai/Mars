@@ -441,6 +441,12 @@ export default function MarsMapSection() {
         }
       })
       .catch((err) => console.warn('Weather sync warning:', err));
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSelected(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
   return (

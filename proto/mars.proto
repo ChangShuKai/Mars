@@ -1,0 +1,135 @@
+syntax = "proto3";
+
+package mars;
+
+// --- Rover Location Types ---
+
+message Coordinates {
+  double lat = 1;
+  double lon = 2;
+  double elevation = 3;
+}
+
+message Distance {
+  double total_meters = 1;
+  double total_km = 2;
+}
+
+message Attitude {
+  double roll = 1;
+  double pitch = 2;
+  double yaw = 3;
+  double tilt = 4;
+}
+
+message TrailPoint {
+  double lon = 1;
+  double lat = 2;
+  int32 sol = 3;
+}
+
+message RoverData {
+  string rover = 1;
+  string name = 2;
+  string nameEn = 3;
+  int32 site = 4;
+  int32 drive = 5;
+  int32 sol = 6;
+  Coordinates coordinates = 7;
+  Distance distance = 8;
+  Attitude attitude = 9;
+  string locationName = 10;
+  string note = 11;
+  int32 waypointsCount = 12;
+  repeated TrailPoint recentTrail = 13;
+  string updatedAt = 14;
+}
+
+message RoversMap {
+  RoverData perseverance = 1;
+  RoverData curiosity = 2;
+}
+
+message RoverLocationResponse {
+  string timestamp = 1;
+  RoversMap rovers = 2;
+  bool fallback = 3;
+}
+
+// --- Weather Types ---
+
+message Metric {
+  double average = 1;
+  double min = 2;
+  double max = 3;
+  string unit = 4;
+}
+
+message PressureMetric {
+  double average = 1;
+  double min = 2;
+  double max = 3;
+  string unit = 4;
+  string string = 5; // "Higher", "Lower", etc.
+}
+
+message WindMetric {
+  double average = 1;
+  double min = 2;
+  double max = 3;
+  string unit = 4;
+  string most_common_direction = 5;
+  double compass_degrees = 6;
+}
+
+message LatestWeather {
+  string sol = 1;
+  string terrestrial_date = 2;
+  string season = 3;
+  string northern_season = 4;
+  string southern_season = 5;
+  string ls = 6;
+  Metric temperature = 7;
+  Metric ground_temperature = 8;
+  PressureMetric pressure = 9;
+  WindMetric wind = 10;
+  string uv_index = 11;
+  string atmo_opacity = 12;
+  string sunrise = 13;
+  string sunset = 14;
+}
+
+message WeatherHistory {
+  string sol = 1;
+  string date = 2;
+  double min_temp = 3;
+  double max_temp = 4;
+  double min_gts = 5;
+  double max_gts = 6;
+  double pressure = 7;
+  string uv = 8;
+}
+
+message StationData {
+  string station = 1;
+  string rover = 2;
+  string name = 3;
+  string nameEn = 4;
+  string status = 5;
+  string instrument = 6;
+  string location = 7;
+  string note = 8;
+  LatestWeather latest = 9;
+  repeated WeatherHistory history = 10;
+}
+
+message StationsMap {
+  StationData perseverance = 1;
+  StationData curiosity = 2;
+  StationData insight = 3;
+}
+
+message WeatherResponse {
+  string timestamp = 1;
+  StationsMap stations = 2;
+}

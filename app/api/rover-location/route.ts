@@ -112,14 +112,23 @@ function parseTelemetry(data: RoverWaypointCollection, rover: "M20" | "MSL") {
   };
 }
 
+import { mars } from "@/lib/proto/mars";
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const reqRover = searchParams.get("rover")?.toUpperCase();
+  const acceptsProtobuf = request.headers.get("accept")?.includes("application/x-protobuf");
 
   try {
     if (reqRover === "M20" || reqRover === "PERSEVERANCE") {
       const raw = await fetchRoverTelemetry("M20");
       const telemetry = parseTelemetry(raw, "M20");
+      if (acceptsProtobuf) {
+        const buffer = mars.RoverData.encode(mars.RoverData.create(telemetry as any)).finish();
+        return new NextResponse(buffer as any, {
+          headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
+        });
+      }
       return NextResponse.json(telemetry, {
         headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
       });
@@ -128,6 +137,12 @@ export async function GET(request: Request) {
     if (reqRover === "MSL" || reqRover === "CURIOSITY") {
       const raw = await fetchRoverTelemetry("MSL");
       const telemetry = parseTelemetry(raw, "MSL");
+      if (acceptsProtobuf) {
+        const buffer = mars.RoverData.encode(mars.RoverData.create(telemetry as any)).finish();
+        return new NextResponse(buffer as any, {
+          headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
+        });
+      }
       return NextResponse.json(telemetry, {
         headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
       });
@@ -141,28 +156,44 @@ export async function GET(request: Request) {
 
     const m20Data = m20Raw.status === "fulfilled" ? parseTelemetry(m20Raw.value, "M20") : FALLBACK_M20;
     const mslData = mslRaw.status === "fulfilled" ? parseTelemetry(mslRaw.value, "MSL") : FALLBACK_MSL;
-
-    return NextResponse.json(
-      {
-        timestamp: new Date().toISOString(),
-        rovers: {
-          perseverance: m20Data,
-          curiosity: mslData,
-        },
+    
+    const payload = {
+      timestamp: new Date().toISOString(),
+      rovers: {
+        perseverance: m20Data,
+        curiosity: mslData,
       },
-      {
-        headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
-      }
-    );
+      fallback: false
+    };
+
+    if (acceptsProtobuf) {
+      const buffer = mars.RoverLocationResponse.encode(mars.RoverLocationResponse.create(payload as any)).finish();
+      return new NextResponse(buffer as any, {
+        headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
+      });
+    }
+
+    return NextResponse.json(payload, {
+      headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
+    });
   } catch (err) {
     console.warn("Rover location handler encountered error:", err);
-    return NextResponse.json({
+    const payload = {
       timestamp: new Date().toISOString(),
       rovers: {
         perseverance: FALLBACK_M20,
         curiosity: FALLBACK_MSL,
       },
       fallback: true,
-    });
+    };
+    
+    if (acceptsProtobuf) {
+      const buffer = mars.RoverLocationResponse.encode(mars.RoverLocationResponse.create(payload as any)).finish();
+      return new NextResponse(buffer as any, {
+        headers: { "Content-Type": "application/x-protobuf" },
+      });
+    }
+
+    return NextResponse.json(payload);
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { mars } from "@/lib/proto/mars";
 import {
   Wind,
   Thermometer,
@@ -377,7 +378,8 @@ interface LoadState {
   hdQuality: boolean;
 }
 
-import MarsGlobe from '../ui/map/MarsGlobe';
+import dynamic from 'next/dynamic';
+const MarsGlobe = dynamic(() => import('../ui/map/MarsGlobe'), { ssr: false });
 
 export default function MarsMapSection() {
   const [missions, setMissions] = useState<Mission[]>(MISSIONS);
@@ -386,8 +388,14 @@ export default function MarsMapSection() {
   const [hd, setHd] = useState(false);
 
   useEffect(() => {
-    fetch('/api/rover-location')
-      .then((res) => res.json())
+    fetch('/api/rover-location', { headers: { 'Accept': 'application/x-protobuf' } })
+      .then(async (res) => {
+        if (res.headers.get("content-type")?.includes("application/x-protobuf")) {
+          const buffer = await res.arrayBuffer();
+          return mars.RoverLocationResponse.decode(new Uint8Array(buffer)) as any;
+        }
+        return res.json();
+      })
       .then((telemetry) => {
         if (telemetry?.rovers) {
           const { perseverance: p, curiosity: c } = telemetry.rovers;
@@ -406,8 +414,14 @@ export default function MarsMapSection() {
       })
       .catch((err) => console.warn('Rover telemetry sync warning:', err));
 
-    fetch('/api/weather')
-      .then((res) => res.json())
+    fetch('/api/weather', { headers: { 'Accept': 'application/x-protobuf' } })
+      .then(async (res) => {
+        if (res.headers.get("content-type")?.includes("application/x-protobuf")) {
+          const buffer = await res.arrayBuffer();
+          return mars.WeatherResponse.decode(new Uint8Array(buffer)) as any;
+        }
+        return res.json();
+      })
       .then((wData) => {
         if (wData?.stations) {
           const { perseverance: pw, curiosity: cw } = wData.stations;

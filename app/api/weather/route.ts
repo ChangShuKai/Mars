@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchPerseveranceWeather, fetchCuriosityWeather } from "@/lib/nasa";
+import { mars } from "@/lib/proto/mars";
 
 export const runtime = "nodejs";
 
@@ -317,20 +318,39 @@ export async function GET(request: Request) {
     },
   };
 
+  const acceptsProtobuf = request.headers.get("accept")?.includes("application/x-protobuf");
+
   if (requestedStation === "perseverance") {
+    if (acceptsProtobuf) {
+      const buffer = mars.StationData.encode(mars.StationData.create(perseveranceData as any)).finish();
+      return new NextResponse(buffer as any, { headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" } });
+    }
     return NextResponse.json(perseveranceData, {
       headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
     });
   }
   if (requestedStation === "curiosity") {
+    if (acceptsProtobuf) {
+      const buffer = mars.StationData.encode(mars.StationData.create(curiosityData as any)).finish();
+      return new NextResponse(buffer as any, { headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" } });
+    }
     return NextResponse.json(curiosityData, {
       headers: { "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" },
     });
   }
   if (requestedStation === "insight") {
+    if (acceptsProtobuf) {
+      const buffer = mars.StationData.encode(mars.StationData.create(INSIGHT_ARCHIVE as any)).finish();
+      return new NextResponse(buffer as any, { headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=172800" } });
+    }
     return NextResponse.json(INSIGHT_ARCHIVE, {
       headers: { "Cache-Control": "public, s-maxage=86400, stale-while-revalidate=172800" },
     });
+  }
+
+  if (acceptsProtobuf) {
+    const buffer = mars.WeatherResponse.encode(mars.WeatherResponse.create(allStations as any)).finish();
+    return new NextResponse(buffer as any, { headers: { "Content-Type": "application/x-protobuf", "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600" } });
   }
 
   return NextResponse.json(allStations, {

@@ -30,7 +30,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div>
+          <nav aria-label="Footer Navigation">
             <h4 className="font-mono text-xs text-[var(--text-muted)] tracking-wider uppercase mb-3">
               數據來源
             </h4>
@@ -49,7 +49,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Tech */}
           <div>

@@ -12,7 +12,7 @@ import Footer from "@/components/ui/Footer";
 
 export default function Home() {
   return (
-    <main className="relative bg-space-950 text-white selection:bg-mars-500/30 selection:text-white flex flex-col gap-20 md:gap-32 overflow-hidden">
+    <main className="relative bg-space-950 text-white selection:bg-mars-500/30 selection:text-white flex flex-col gap-20 md:gap-32 overflow-x-hidden">
       {/* Seamless global background to tie the page together */}
       <div className="fixed inset-0 z-0 pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-space-900 via-space-950 to-black opacity-80" />
       

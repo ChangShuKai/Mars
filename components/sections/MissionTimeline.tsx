@@ -124,14 +124,14 @@ export default function MissionTimeline() {
           </p>
         </motion.div>
 
-        <div className="relative max-w-4xl mx-auto">
+        <ol className="relative max-w-4xl mx-auto list-none p-0">
           {MISSIONS.map((mission, i) => {
             const cfg = STATUS_CONFIG[mission.status as keyof typeof STATUS_CONFIG];
             const Icon = cfg.icon;
             const isLeft = i % 2 === 0;
 
             return (
-              <motion.div
+              <motion.li
                 key={`${mission.year}-${mission.name}`}
                 initial={{ opacity: 0, x: isLeft ? -40 : 40 }}
                 whileInView={{ opacity: 1, x: 0 }}
@@ -180,15 +180,15 @@ export default function MissionTimeline() {
                   }`}>
                     <Rocket size={14} className={mission.status === "active" ? "text-mars-400" : "text-[var(--text-muted)]"} />
                   </div>
-                  <span className="font-mono text-xs text-mars-400 mt-1 font-bold">{mission.year}</span>
+                  <time className="font-mono text-xs text-mars-400 mt-1 font-bold">{mission.year}</time>
                 </div>
 
                 {/* Spacer for alternating layout */}
                 <div className="flex-1 hidden md:block" />
-              </motion.div>
+              </motion.li>
             );
           })}
-        </div>
+        </ol>
       </div>
     </section>
   );

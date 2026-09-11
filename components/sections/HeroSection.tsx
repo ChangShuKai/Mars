@@ -114,19 +114,19 @@ export default function HeroSection() {
         >
           <div className="flex flex-col items-center">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">距地球</span>
-            <span className="text-mars-400 text-sm font-bold data-pulse">
+            <span className="text-mars-400 text-sm font-bold data-pulse" aria-live="polite" aria-atomic="true">
               {marsData ? `${marsData.distance_million_km.toFixed(1)} 百萬km` : "計算中..."}
             </span>
           </div>
           <div className="flex flex-col items-center">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">信號延遲</span>
-            <span className="text-mars-400 text-sm font-bold data-pulse">
+            <span className="text-mars-400 text-sm font-bold data-pulse" aria-live="polite" aria-atomic="true">
               {marsData ? `${marsData.light_minutes.toFixed(1)} 分鐘` : "---"}
             </span>
           </div>
           <div className="flex flex-col items-center col-span-2 sm:col-span-1">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">當前 Sol</span>
-            <span className="text-mars-400 text-sm font-bold data-pulse">Sol {marsSol}</span>
+            <span className="text-mars-400 text-sm font-bold data-pulse" aria-live="polite" aria-atomic="true">Sol {marsSol}</span>
           </div>
           <div className="flex flex-col items-center col-span-2 sm:col-span-3 border-t border-mars-500/10 pt-3 mt-1">
             <span className="text-[var(--text-muted)] tracking-wider mb-1">地球時間 (UTC)</span>

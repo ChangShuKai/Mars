@@ -194,8 +194,16 @@ export default function MarsGlobe({ missions, selected, onSelect, hd, isGlobe, s
   const meshRef = useRef<THREE.Mesh>(null);
 
   return (
-    <div className="w-full h-full relative">
-      <Canvas camera={{ position: [0, 0, 6], fov: 45 }}>
+    <div className="w-full h-full relative" aria-label="Interactive 3D Mars Globe">
+      <Canvas
+        camera={{ position: [0, 0, 6], fov: 45 }}
+        gl={{ 
+          antialias: true,
+          alpha: true,
+          powerPreference: "high-performance",
+          logarithmicDepthBuffer: true
+        }}
+      >
         <Stars radius={100} depth={50} count={2000} factor={4} saturation={0} fade speed={1} />
         
         <ambientLight intensity={0.4} />

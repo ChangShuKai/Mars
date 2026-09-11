@@ -32,7 +32,7 @@ const KEYWORDS = [
   { id: "selfie", label: "自拍" },
 ];
 
-const PhotoCard = React.memo(function PhotoCard({ item, onClick }: { item: NasaImageItem; onClick: (item: NasaImageItem) => void }) {
+const PhotoCard = React.memo(function PhotoCard({ item, onClick, priority }: { item: NasaImageItem; onClick: (item: NasaImageItem) => void; priority?: boolean }) {
   const thumb = item.links?.find((l) => l.rel === "preview")?.href;
   const data = item.data[0];
   const date = data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : "";
@@ -54,6 +54,7 @@ const PhotoCard = React.memo(function PhotoCard({ item, onClick }: { item: NasaI
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          priority={priority}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-space-950/80 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-2 right-2">
@@ -250,7 +251,7 @@ export default function RoverFeed() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3">
             {photos.map((item, i) => (
-              <PhotoCard key={`${item.data[0].nasa_id}-${i}`} item={item} onClick={setSelected} />
+              <PhotoCard key={`${item.data[0].nasa_id}-${i}`} item={item} onClick={setSelected} priority={i < 4} />
             ))}
           </div>
         )}

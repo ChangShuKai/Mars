@@ -43,10 +43,6 @@ export const metadata: Metadata = {
     title: "Mars Explorer",
     statusBarStyle: "black-translucent",
   },
-  icons: {
-    icon: "/icon-192x192.png",
-    apple: "/icon-192x192.png",
-  },
 };
 
 export default function RootLayout({

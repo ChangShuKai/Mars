@@ -80,7 +80,7 @@ const fetchMSLImages = async (cameraCode: string): Promise<RawImage[]> => {
   const data = await res.json();
   return (data.items || []).map((item: any) => ({
     id: item.id,
-    url: item.url,
+    url: item.url?.replace("http://", "https://"),
     title: item.title,
     sol: item.sol,
     date: item.date_taken,
@@ -93,14 +93,17 @@ const fetchM2020Images = async (cameraCode: string): Promise<RawImage[]> => {
   const res = await fetch(url);
   if (!res.ok) throw new Error("Failed to fetch");
   const data = await res.json();
-  return (data.images || []).map((item: any) => ({
-    id: item.imageid,
-    url: item.image_files?.medium || item.image_files?.small || item.image_files?.full_res,
-    title: item.title || item.caption?.slice(0, 50),
-    sol: item.sol,
-    date: item.date_taken_utc,
-    link: item.link || `https://mars.nasa.gov/mars2020/multimedia/raw-images/${item.imageid}`,
-  }));
+  return (data.images || []).map((item: any) => {
+    const rawUrl = item.image_files?.medium || item.image_files?.small || item.image_files?.full_res;
+    return {
+      id: item.imageid,
+      url: rawUrl?.replace("http://", "https://"),
+      title: item.title || item.caption?.slice(0, 50),
+      sol: item.sol,
+      date: item.date_taken_utc,
+      link: item.link || `https://mars.nasa.gov/mars2020/multimedia/raw-images/${item.imageid}`,
+    };
+  });
 };
 
 const CameraImageRow = ({

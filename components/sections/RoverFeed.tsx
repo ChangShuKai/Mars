@@ -33,7 +33,7 @@ const KEYWORDS = [
 ];
 
 const PhotoCard = React.memo(function PhotoCard({ item, onClick, priority }: { item: NasaImageItem; onClick: (item: NasaImageItem) => void; priority?: boolean }) {
-  const thumb = item.links?.find((l) => l.rel === "preview")?.href;
+  const thumb = item.links?.find((l) => l.rel === "preview")?.href?.replace("http://", "https://");
   const data = item.data[0];
   const date = data.date_created ? new Date(data.date_created).toLocaleDateString("zh-TW") : "";
 
@@ -73,7 +73,7 @@ const PhotoCard = React.memo(function PhotoCard({ item, onClick, priority }: { i
 
 function LightBox({ item, onClose }: { item: NasaImageItem; onClose: () => void }) {
   const data = item.data[0];
-  const thumb = item.links?.find((l) => l.rel === "preview")?.href;
+  const thumb = item.links?.find((l) => l.rel === "preview")?.href?.replace("http://", "https://");
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

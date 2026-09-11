@@ -22,6 +22,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://mars-explorer.vercel.app'),
   title: "Mars Explorer — NASA Live Data",
   description:
     "Explore Mars with real NASA data: 360° surface panoramas, InSight weather station final readings, live rover photo feeds from Perseverance and Curiosity, and more.",
@@ -37,6 +38,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Mars Explorer",
     description: "Explore Mars with real NASA data",
+  },
+  appleWebApp: {
+    title: "Mars Explorer",
+    statusBarStyle: "black-translucent",
   },
 };
 

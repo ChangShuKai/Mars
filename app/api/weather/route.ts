@@ -356,6 +356,7 @@ export async function GET(request: Request) {
   return NextResponse.json(allStations, {
     headers: {
       "Cache-Control": "public, s-maxage=1800, stale-while-revalidate=3600",
+      "Access-Control-Allow-Origin": "*",
     },
   });
 }

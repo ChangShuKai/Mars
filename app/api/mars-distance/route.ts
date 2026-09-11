@@ -67,7 +67,10 @@ export async function GET() {
       calculated_at: new Date().toISOString(),
     },
     {
-      headers: { "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200" },
+      headers: { 
+        "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=7200",
+        "Access-Control-Allow-Origin": "*",
+      },
     }
   );
 }
